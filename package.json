@@ -1,0 +1,14 @@
+{
+  "name": "software-engineering-assignment-2",
+  "version": "1.0.0",
+  "description": "Software Engineering Assignment 2, Due 2/5/2024",
+  "main": "record_reader.js",
+  "scripts": {
+    "test": "jasmine"
+  },
+  "author": "Deshna Doshi",
+  "license": "ISC",
+  "devDependencies": {
+    "jasmine": "^5.1.0"
+  }
+}
