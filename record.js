@@ -3,6 +3,7 @@ const fs = require('fs');
 let records = []; 
 let begin_keyword = "record:begin"; 
 let end_keyword = "record:end"; 
+let current_record = "";
 
 function process_input(){   
 
@@ -14,23 +15,27 @@ function process_input(){
             
             file_data.split(/\r?\n/).forEach(line =>  {
                 let if_record_end = false;
-                let current_record = ""; // the record currently being read and stored in a file
-                console.log("here1"); 
-                if ((line.toLowerCase()).localeCompare(begin_keyword) == 0){
-                    console.log("here2"); 
-                    if (if_record_end == false){ // if you haven't reached the end of the record, continue
-                        console.log("here4"); 
-                        current_record += line; 
-                    }
-                    // never goes into this if statement, bc checking for end is inside checking for begin
-                    if ((line.toLowerCase()).localeCompare(end_keyword) == 0){
-                        console.log("here3"); 
-                        current_record += line; 
-                        console.log("the record", current_record); 
-                        records.push(current_record); 
-                        if_record_end = true; // the current record has ended 
-                    }
+                let if_record_begin = false; 
+                 // the record currently being read and stored in a file
+                // console.log("here1"); 
 
+                if ((line.toLowerCase()).localeCompare(begin_keyword) == 0){
+                    if_record_begin = true;  
+                    
+                } 
+
+                if ((if_record_begin== true) && (if_record_end == false)){ // if you haven't reached the end of the record, continue
+                    // console.log("here4"); 
+                    current_record += line; 
+                }
+                
+                if ((line.toLowerCase()).localeCompare(end_keyword) == 0){
+                    // console.log("here3"); 
+                    current_record += line; 
+                    // console.log("the record", current_record); 
+                    records.push(current_record); 
+                    if_record_end = true; // the current record has ended 
+                    current_record = ""; 
                 }
                 
             });
@@ -42,4 +47,4 @@ function process_input(){
 } 
 
 process_input(); 
-console.log("hello", records); 
+console.log("Records:", records); 
