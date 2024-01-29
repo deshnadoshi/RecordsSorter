@@ -1,1 +1,12 @@
 reCord:beGIN
+<IDENTIFIER:textstring>
+reCord:END
+reCord:beGIN
+<IDENTIFIER:>
+reCord:END
+reCord:beGIN
+<IDENTIFIER:>
+reCord:ENDs
+reCord:beGIN
+<IDENTIFIER:>
+reCord:END
