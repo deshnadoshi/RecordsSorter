@@ -21,18 +21,18 @@ function process_input(){
 
                 if ((line.toLowerCase()).localeCompare(begin_keyword) == 0){
                     if_record_begin = true;  
-                    
                 } 
 
                 if ((if_record_begin== true) && (if_record_end == false)){ // if you haven't reached the end of the record, continue
-                    // console.log("here4"); 
+                    console.log("here4"); 
+                    console.log(line); 
                     current_record += line; 
                 }
                 
                 if ((line.toLowerCase()).localeCompare(end_keyword) == 0){
-                    // console.log("here3"); 
+                    console.log("here3"); 
                     current_record += line; 
-                    // console.log("the record", current_record); 
+                    console.log("THE RECORD::: ", current_record); 
                     records.push(current_record); 
                     if_record_end = true; // the current record has ended 
                     current_record = ""; 
