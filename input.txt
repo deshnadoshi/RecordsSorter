@@ -1,7 +1,7 @@
 reCord:beGIN
-<IDENTIFIER:hello>
-<>
-<>
+<IDENTIFIER:R1>
+<R1>
+<R1>
 reCord:END
 reCord:begIN
 <IDENTIFIER:record2>
@@ -9,11 +9,11 @@ reCord:begIN
 reCoRd:END
 reCord:beGIn
 <IDENTIFIER:record3>
-<>
+<R3>
 reCorD:EnD
 reCORd:beGiN
 <IDENTIFIER:record4>
-<>
-<>
-<>
+<R4>
+<R4>
+<R4>
 reCord:end
