@@ -1,15 +1,15 @@
 const fs = require('fs');
 
-let records = []; 
-let begin_keyword = "record:begin"; 
-let end_keyword = "record:end"; 
-let current_record = "";
+
 
 function process_input(){   
 
-    fs.readFile('input.txt', (err, data) =>{
+    let current_record = "";
+    let records = []; 
+
+    fs.readFile('records.txt', (err, data) =>{
         if (err){
-            console.log("Please rename your file to input.txt and re-run the program."); 
+            console.log("Please rename your input file to records.txt and re-run the program."); 
         } else {
             let file_data = data.toString(); 
             let if_record_end = false;
@@ -17,33 +17,31 @@ function process_input(){
 
             file_data.split(/\r?\n/).forEach(line =>  {
 
-                if ((line.toLowerCase()).localeCompare(begin_keyword) == 0){
+                if ((line.toLowerCase()).includes("begin:record")){
                     if_record_begin = true;  
+                    if_record_end = false; 
                 } 
 
-                if ((if_record_begin== true) && (if_record_end == false)){ // if you haven't reached the end of the record, continue
-                    console.log(line); 
+                if ((if_record_begin == true) && (if_record_end == false)){ // if you haven't reached the end of the record, continue
                     current_record += line; 
                 }
                 
-                if ((line.toLowerCase()).localeCompare(end_keyword) == 0){
-                    current_record += line; 
-                    console.log("THE RECORD === \n", current_record); 
-
+                if ((line.toLowerCase()).includes("end:record")){ 
                     records.push(current_record); // not adding to the array properly?
-                    
                     if_record_end = true; // the current record has ended 
                     if_record_begin = false; 
                     current_record = ""; 
                 }
-                
             });
-            
 
+            console.log(records); 
+            
         } 
     }); 
+
+     
+
 
 } 
 
 process_input(); 
-console.log("Records:", records); 
