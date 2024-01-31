@@ -1,12 +1,14 @@
 const { time, log } = require('console');
 const fs = require('fs');
 
-const colorNames = [
+const allowable_colors = [
     "Red", "Green", "Blue", "Yellow", "Purple",
     "Cyan", "Magenta", "White", "Black", "Gray",
     "Silver", "Maroon", "Olive", "Navy", "Teal",
     "Lime", "Aqua", "Fuchsia", "Pink", "Brown"
   ];
+
+const allowable_properties = ["identifier", "time", "weight", "color", "units"]; 
   
 let log_message = ""; 
 
@@ -58,7 +60,7 @@ function process_input(){
              for (let i = 0; i < check_records.length; i++){
                 if (check_records[i] == false){
                     console.log(log_message); 
-                    console.log("Please check record", i); 
+                    console.log("Please check record", (i + 1)); 
                     is_record_err = true; 
                 }
              }
@@ -103,6 +105,7 @@ function check_requirements(record_array){
     let units_count = 0; 
     let weight_count = 0; 
     let color_count = 0; 
+    let unknown_count = 0; 
 
     let valid_record = true;
     
@@ -110,22 +113,18 @@ function check_requirements(record_array){
     for (let i = 0; i < record_array.length; i++){
         if ((record_array[i].toLowerCase()).includes("identifier")){
             id_count++; 
-        }
-
-        if ((record_array[i].toLowerCase()).includes("time")){
+        } else if ((record_array[i].toLowerCase()).includes("time")){
             time_count++; 
-        }
-
-        if ((record_array[i].toLowerCase()).includes("units")){
+        } else if ((record_array[i].toLowerCase()).includes("units")){
             units_count++; 
-        }
-
-        if ((record_array[i].toLowerCase()).includes("weight")){
+        } else if ((record_array[i].toLowerCase()).includes("weight")){
             weight_count++; 
-        }
-
-        if ((record_array[i].toLowerCase()).includes("color")){
+        } else if ((record_array[i].toLowerCase()).includes("color")){
             color_count++; 
+        } else if (!((record_array[i].toLowerCase()).includes("begin") || (record_array[i].toLowerCase()).includes("end"))){
+            // if the record doesn't have begin and end, and it also doesn't have any of the other properties
+            // then there is an unknown property 
+            unknown_count++; 
         }
 
     }
@@ -157,6 +156,11 @@ function check_requirements(record_array){
 
     if (weight_count == 1 && units_count != 1){
         console.log("There is an error in your records file. UNITS property is required when WEIGHT is provided."); 
+        valid_record = false; 
+    }
+
+    if (unknown_count > 0){
+        console.log("There is an error in your records file. There is an unknown property."); 
         valid_record = false; 
     }
 
