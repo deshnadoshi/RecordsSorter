@@ -7,8 +7,6 @@ const allowable_colors = [
     "Silver", "Maroon", "Olive", "Navy", "Teal",
     "Lime", "Aqua", "Fuchsia", "Pink", "Brown"
   ];
-
-const allowable_properties = ["identifier", "time", "weight", "color", "units"]; 
   
 let log_message = ""; 
 
