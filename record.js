@@ -10,14 +10,14 @@ const allowable_colors = [
   
 let log_message = ""; 
 
-function process_input(){   
+function process_input(file_name_string){   
 
     let current_record = "";
     let records = []; 
     let check_records = []; 
     let is_record_err = false; 
 
-    fs.readFile('records.txt', (err, data) =>{
+    fs.readFile(file_name_string, (err, data) =>{
         if (err){
             console.log("Please rename your input file to records.txt and re-run the program."); 
         } else {
@@ -85,7 +85,7 @@ function process_input(){
 
 } 
 
-process_input(); 
+process_input('records.txt'); 
 
 
 function split_record(record){
