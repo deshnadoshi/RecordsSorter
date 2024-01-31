@@ -19,7 +19,7 @@ function process_input(file_name_string){
 
     fs.readFile(file_name_string, (err, data) =>{
         if (err){
-            console.log("Please rename your input file to records.txt and re-run the program."); 
+            console.log("Please try again."); 
         } else {
             let file_data = data.toString(); 
             let if_record_end = false;
@@ -111,14 +111,15 @@ function process_input(file_name_string){
      
 
 
-} const readline = require('node:readline').createInterface({
+} 
+const readline = require('node:readline').createInterface({
     input: process.stdin,
     output: process.stdout,
-  });
+});
 
 function get_file_name(){
     
-    readline.question(`\n\nEnter the name of your text file with the extension included (i.e. records.txt) [Enter 'Q' to exit]: `, input_file_name => {
+    readline.question(`\n\nEnter the name of your text file with the extension included (i.e. records.txt) [enter 'Q' to exit]\nPlease note >> Input files are sensitive to whitespace: `, input_file_name => {
         fs.readdir('.', (err, files) => {
             if (err) {
               console.error(err);
@@ -257,6 +258,7 @@ function check_valid_color(record_array){
         color_value_arr = color_line.split(":"); 
         if (color_value_arr.length > 2){
             // if there is more than one :, and it is split into more than 2 parts, theres a formatting issue
+            console.log("Please check your file for a formatting issue."); 
             is_valid_color = false; 
         } else {
             // if there are only two parts, take the second part and check that
@@ -301,6 +303,7 @@ function check_valid_units(record_array){
         units_value_arr = units_line.split(":"); 
         if (units_value_arr.length > 2){
             // if there is more than one :, and it is split into more than 2 parts, theres a formatting issue
+            console.log("Please check your file for a formatting issue."); 
             is_valid_units = false; 
         } else {
             // if there are only two parts, take the second part and check that
@@ -349,6 +352,7 @@ function check_valid_weight(record_array){
         weight_value_arr = weight_line.split(":"); 
         if (weight_value_arr.length > 2){
             // if there is more than one :, and it is split into more than 2 parts, theres a formatting issue
+            console.log("Please check your file for a formatting issue."); 
             is_valid_weight = false; 
         } else {
             // if there are only two parts, take the second part and check that
@@ -370,4 +374,9 @@ function check_valid_weight(record_array){
 
 
     return is_valid_weight; 
+}
+
+function check_valid_weight(all_records_array){
+    // need to check that each identifier is unique 
+
 }
