@@ -8,7 +8,6 @@ const allowable_colors = [
     "Lime", "Aqua", "Fuchsia", "Pink", "Brown"
   ];
   
-let log_message = ""; 
 
 function process_input(file_name_string){   
 
@@ -58,8 +57,7 @@ function process_input(file_name_string){
             // might have to get rid of this
              for (let i = 0; i < check_records.length; i++){
                 if (check_records[i] == false){
-                    is_record_err = true;
-                    
+                    is_record_err = true;  
                 }
              }
 
@@ -73,7 +71,7 @@ function process_input(file_name_string){
             for (let i = 0; i < check_records.length; i++){
                 if (check_records[i] == false){  
                     is_record_err = true; 
-                    process.exit();  
+                    // process.exit();  
                 }
             }
             
@@ -83,10 +81,42 @@ function process_input(file_name_string){
      
 
 
-} 
+} const readline = require('node:readline').createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
 
-process_input('records.txt'); 
+function get_file_name(){
+    
+    readline.question(`\n\nEnter the name of your text file with the extension included (i.e. records.txt) [Enter 'Q' to exit]: `, input_file_name => {
+        fs.readdir('.', (err, files) => {
+            if (err) {
+              console.error(err);
+              return;
+            }
 
+            if (input_file_name === "Q" || input_file_name === 'q'){
+                process.exit(); 
+            }
+
+            if (files.includes(input_file_name)) {
+                process_input(input_file_name);
+                setTimeout(function() {
+                    get_file_name(); 
+                }, 10);
+                  
+            } else {
+                console.log(`${input_file_name} does not exist in the current directory.`);
+                console.log("Please enter a new file name."); 
+                get_file_name(); 
+            }
+            
+        });
+         
+    });
+}
+
+get_file_name(); 
 
 function split_record(record){
     let record_contents = []; 
@@ -219,4 +249,50 @@ function check_valid_color(record_array){
     }
 
     return is_valid_color; 
+}
+// UNFINISHED
+function check_valid_units(record_array){
+    let units_line = ""; 
+    let is_valid_units = true; 
+    let units_value_arr = []; 
+
+
+    for (let i = 0; i < record_array.length; i++){
+        if ((record_array[i].toLowerCase()).includes("units")){
+            // store the line with units label in it here
+            units_line = record_array[i]; 
+        }
+    }
+
+
+    if (units_line.includes(":")){
+        units_value_arr = units_line.split(":"); 
+        if (units_value_arr.length > 2){
+            // if there is more than one :, and it is split into more than 2 parts, theres a formatting issue
+            is_valid_color = false; 
+        } else {
+            // if there are only two parts, take the second part and check that
+            color_value = color_value_arr[color_value_arr.length - 1]; // this has the color value
+            for (let i = 0; i < allowable_colors.length; i++){
+                if (color_value.toLowerCase() === allowable_colors[i].toLowerCase()){
+                    in_color_list = true; 
+                }
+            }
+
+            is_valid_color = in_color_list; // if it is in the color list, it is valid, otherwise it is not
+            if (in_color_list == false){
+                console.log("There is invalid COLOR in one (or more) of your records. "); 
+            }
+        }
+    } else {
+        if (!(color_line === ""))
+            console.log("There is a formatting issue in one (or more) of your records. ");
+        is_valid_color = false; 
+    }
+
+
+    return is_valid_units; 
+
+
+
 }
