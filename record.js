@@ -9,6 +9,7 @@ const allowable_colors = [
   ];
   
 
+  const allowable_units = ["mg", "g", "kg", "oz", "lb", "ton"]; 
 function process_input(file_name_string){   
 
     let current_record = "";
@@ -74,6 +75,21 @@ function process_input(file_name_string){
                     // process.exit();  
                 }
             }
+
+            check_records = [];
+
+            for (let i = 0; i < records.length; i++){
+                record_i = split_record(records[i]);
+                check_records.push(check_valid_units(record_i)); 
+            }
+            
+            for (let i = 0; i < check_records.length; i++){
+                if (check_records[i] == false){  
+                    is_record_err = true; 
+                    // process.exit();  
+                }
+            }
+
             
         } 
     }); 
@@ -192,8 +208,8 @@ function check_requirements(record_array){
         valid_record = false; 
     }
 
-    if (weight_count == 1 && units_count != 1){
-        console.log("There is an error in your records file. UNITS property is required when WEIGHT is provided."); 
+    if ((weight_count == 1 && units_count != 1) || (weight_count == 0 && units_count != 0)){
+        console.log("There is an error in your records file. UNITS property is only required when WEIGHT is provided."); 
         valid_record = false; 
     }
 
@@ -250,11 +266,13 @@ function check_valid_color(record_array){
 
     return is_valid_color; 
 }
-// UNFINISHED
+
 function check_valid_units(record_array){
     let units_line = ""; 
     let is_valid_units = true; 
     let units_value_arr = []; 
+    let units_value = ""; 
+    let in_units_list = false; 
 
 
     for (let i = 0; i < record_array.length; i++){
@@ -269,25 +287,25 @@ function check_valid_units(record_array){
         units_value_arr = units_line.split(":"); 
         if (units_value_arr.length > 2){
             // if there is more than one :, and it is split into more than 2 parts, theres a formatting issue
-            is_valid_color = false; 
+            is_valid_units = false; 
         } else {
             // if there are only two parts, take the second part and check that
-            color_value = color_value_arr[color_value_arr.length - 1]; // this has the color value
-            for (let i = 0; i < allowable_colors.length; i++){
-                if (color_value.toLowerCase() === allowable_colors[i].toLowerCase()){
-                    in_color_list = true; 
+            units_value = units_value_arr[units_value_arr.length - 1]; // this has the color value
+            for (let i = 0; i < allowable_units.length; i++){
+                if (units_value.toLowerCase() === allowable_units[i].toLowerCase()){
+                    in_units_list = true; 
                 }
             }
 
-            is_valid_color = in_color_list; // if it is in the color list, it is valid, otherwise it is not
-            if (in_color_list == false){
-                console.log("There is invalid COLOR in one (or more) of your records. "); 
+            is_valid_units = in_units_list; // if it is in the color list, it is valid, otherwise it is not
+            if (in_units_list == false){
+                console.log("There is invalid UNITS in one (or more) of your records. "); 
             }
         }
     } else {
-        if (!(color_line === ""))
+        if (!(units_line === ""))
             console.log("There is a formatting issue in one (or more) of your records. ");
-        is_valid_color = false; 
+        is_valid_units = false; 
     }
 
 
@@ -296,3 +314,4 @@ function check_valid_units(record_array){
 
 
 }
+
