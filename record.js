@@ -90,6 +90,20 @@ function process_input(file_name_string){
                 }
             }
 
+            check_records = [];
+
+            for (let i = 0; i < records.length; i++){
+                record_i = split_record(records[i]);
+                check_records.push(check_valid_weight(record_i)); 
+            }
+            
+            for (let i = 0; i < check_records.length; i++){
+                if (check_records[i] == false){  
+                    is_record_err = true; 
+                    // process.exit();  
+                }
+            }
+
             
         } 
     }); 
@@ -315,3 +329,45 @@ function check_valid_units(record_array){
 
 }
 
+function check_valid_weight(record_array){
+    let weight_line = ""; 
+    let is_valid_weight = true; 
+    let weight_value_arr = []; 
+    let weight_value = ""; 
+    let in_weight_list = false; 
+
+
+    for (let i = 0; i < record_array.length; i++){
+        if ((record_array[i].toLowerCase()).includes("weight")){
+            // store the line with units label in it here
+            weight_line = record_array[i]; 
+        }
+    }
+
+
+    if (weight_line.includes(":")){
+        weight_value_arr = weight_line.split(":"); 
+        if (weight_value_arr.length > 2){
+            // if there is more than one :, and it is split into more than 2 parts, theres a formatting issue
+            is_valid_weight = false; 
+        } else {
+            // if there are only two parts, take the second part and check that
+            weight_value = weight_value_arr[weight_value_arr.length - 1]; // this has the color value
+            if (/^\d+$/.test(weight_value)){
+                in_weight_list = true; 
+            }
+
+            is_valid_weight = in_weight_list; // if it is in the color list, it is valid, otherwise it is not
+            if (in_weight_list == false){
+                console.log("There is invalid WEIGHT in one (or more) of your records. "); 
+            }
+        }
+    } else {
+        if (!(weight_line === ""))
+            console.log("There is a formatting issue in one (or more) of your records. ");
+        is_valid_weight = false; 
+    }
+
+
+    return is_valid_weight; 
+}
