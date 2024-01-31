@@ -53,7 +53,7 @@ function process_input(file_name_string){
             for (let i = 0; i < records.length; i++){
                 record_i = split_record(records[i]); // record_i is the array storing the individual lines of the current record
                 check_records.push(check_requirements(record_i)); 
-            }
+            } 
 
             // might have to get rid of this
              for (let i = 0; i < check_records.length; i++){
@@ -378,5 +378,21 @@ function check_valid_weight(record_array){
 
 function check_valid_weight(all_records_array){
     // need to check that each identifier is unique 
+    // going to run with the assumption (that will have to be built in later) that there is an identifier row 
+    // in each record 
+    let id_array = []; 
+    let individual_line = []; 
+    // all_records_array is the records array in the original function 
 
+    // need to get the identifier line from each records array 
+    for (let i = 0; i < all_records_array.length; i++){
+        individual_line = split_record(i); 
+        individual_line.forEach(line =>  {
+            if ((line.toLowerCase()).includes("identifier")){
+                id_array.push(line)
+            } 
+        });
+    }
+
+    console.log(id_array); 
 }
