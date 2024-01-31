@@ -1,11 +1,21 @@
+const { time, log } = require('console');
 const fs = require('fs');
 
-
+const colorNames = [
+    "Red", "Green", "Blue", "Yellow", "Purple",
+    "Cyan", "Magenta", "White", "Black", "Gray",
+    "Silver", "Maroon", "Olive", "Navy", "Teal",
+    "Lime", "Aqua", "Fuchsia", "Pink", "Brown"
+  ];
+  
+let log_message = ""; 
 
 function process_input(){   
 
     let current_record = "";
     let records = []; 
+    let check_records = []; 
+    let is_record_err = false; 
 
     fs.readFile('records.txt', (err, data) =>{
         if (err){
@@ -42,10 +52,20 @@ function process_input(){
              */
             for (let i = 0; i < records.length; i++){
                 record_i = split_record(records[i]); // record_i is the array storing the individual lines of the current record
-                console.log(record_i); 
+                check_records.push(check_requirements(record_i)); 
             }
 
-             
+             for (let i = 0; i < check_records.length; i++){
+                if (check_records[i] == false){
+                    console.log(log_message); 
+                    console.log("Please check record", i); 
+                    is_record_err = true; 
+                }
+             }
+
+             if (is_record_err){
+                process.exit(); 
+             }
             
         } 
     }); 
@@ -86,9 +106,60 @@ function check_requirements(record_array){
 
     let valid_record = true;
     
-    
 
-    
+    for (let i = 0; i < record_array.length; i++){
+        if ((record_array[i].toLowerCase()).includes("identifier")){
+            id_count++; 
+        }
+
+        if ((record_array[i].toLowerCase()).includes("time")){
+            time_count++; 
+        }
+
+        if ((record_array[i].toLowerCase()).includes("units")){
+            units_count++; 
+        }
+
+        if ((record_array[i].toLowerCase()).includes("weight")){
+            weight_count++; 
+        }
+
+        if ((record_array[i].toLowerCase()).includes("color")){
+            color_count++; 
+        }
+
+    }
+
+    if (id_count != 1){
+        console.log("There is an error in your records file. You may only have one IDENTIFIER property."); 
+        valid_record = false; 
+    }
+
+    if (time_count != 1){
+        console.log("There is an error in your records file. You may only have one TIME property."); 
+        valid_record = false; 
+    }
+
+    if (units_count > 1){
+        console.log("There is an error in your records file. You may only have one UNITS property."); 
+        valid_record = false; 
+    }
+
+    if (weight_count > 1){
+        console.log("There is an error in your records file. You may only have one WEIGHT property."); 
+        valid_record = false; 
+    }
+
+    if (color_count > 1){
+        console.log("There is an error in your records file. You may only have one COLOR property."); 
+        valid_record = false; 
+    }
+
+    if (weight_count == 1 && units_count != 1){
+        console.log("There is an error in your records file. UNITS property is required when WEIGHT is provided."); 
+        valid_record = false; 
+    }
+
     return valid_record; 
 
 }
