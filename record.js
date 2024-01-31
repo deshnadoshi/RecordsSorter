@@ -55,17 +55,27 @@ function process_input(){
                 check_records.push(check_requirements(record_i)); 
             }
 
+            // might have to get rid of this
              for (let i = 0; i < check_records.length; i++){
                 if (check_records[i] == false){
-                    console.log(log_message); 
-                    console.log("Please check record", (i + 1)); 
-                    is_record_err = true; 
+                    is_record_err = true;
+                    
                 }
              }
 
-             if (is_record_err){
-                process.exit(); 
-             }
+             check_records = []; 
+
+             for (let i = 0; i < records.length; i++){
+                record_i = split_record(records[i]);
+                check_records.push(check_valid_color(record_i)); 
+            }
+            
+            for (let i = 0; i < check_records.length; i++){
+                if (check_records[i] == false){  
+                    is_record_err = true; 
+                    process.exit();  
+                }
+            }
             
         } 
     }); 
@@ -164,4 +174,49 @@ function check_requirements(record_array){
 
     return valid_record; 
 
+}
+
+function check_valid_color(record_array){
+    let is_valid_color = true; 
+    let color_line = "";
+    let color_line_arr = []; 
+    let color_value = ""; 
+    let in_color_list = false; 
+    
+    // already assuming that the check for color has been done, so no need to check that color exists
+    for (let i = 0; i < record_array.length; i++){
+        if ((record_array[i].toLowerCase()).includes("color")){
+            // store the line with color in it here
+            color_line = record_array[i]; 
+        }
+    }
+    // issue is that the line is empty so it sends out the other formatting messaee anyway 
+
+    // if there is a colon, separate at colon, otherwise you know that there is a formatting issue 
+    if (color_line.includes(":")){
+        color_value_arr = color_line.split(":"); 
+        if (color_value_arr.length > 2){
+            // if there is more than one :, and it is split into more than 2 parts, theres a formatting issue
+            is_valid_color = false; 
+        } else {
+            // if there are only two parts, take the second part and check that
+            color_value = color_value_arr[color_value_arr.length - 1]; // this has the color value
+            for (let i = 0; i < allowable_colors.length; i++){
+                if (color_value.toLowerCase() === allowable_colors[i].toLowerCase()){
+                    in_color_list = true; 
+                }
+            }
+
+            is_valid_color = in_color_list; // if it is in the color list, it is valid, otherwise it is not
+            if (in_color_list == false){
+                console.log("There is invalid COLOR in one (or more) of your records. "); 
+            }
+        }
+    } else {
+        if (!(color_line === ""))
+            console.log("There is a formatting issue in one (or more) of your records. ");
+        is_valid_color = false; 
+    }
+
+    return is_valid_color; 
 }
