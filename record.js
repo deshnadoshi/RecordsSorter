@@ -114,14 +114,20 @@ function process_input(file_name_string){
             is_time_format_corr = check_valid_time(records); 
 
             if (is_req_err == false && is_color_err == false && is_units_err == false && is_weight_err == false && is_unique_id_corr == true && is_time_format_corr == true){
+                let sorted_arr = []; 
                 console.log("Your records file contains NO errors!"); 
                 console.log("The results of the sorted records are stored in the 'sorted_records.txt' file in your file directory."); 
 
                 date_conversion("20031105T152300"); // obviously need to change this
+                sorted_arr = sort_times(records); // sorted_arr has the sorted contents
                 
+                // now need to export these contents to a file 
+
+                return "Success"; 
 
             } else {
                 console.log("\n\n--YOU HAVE THE AFOREMENTIONED ISSUES IN YOUR RECORDS FILE. PLEASE EDIT THE FILE AND TRY AGAIN.--"); 
+                return "Failure"; 
             }
             
         } 
@@ -505,7 +511,7 @@ function check_valid_time(all_records_array){
 
 }
 
-function sort(all_records_array){
+function sort_times(all_records_array){
     // take the entire array and store all the time values with the id 1 stuff in another array 
     // use date_conversion to get the string 
     // then sort using the min/max method for normal numbers 
@@ -527,7 +533,6 @@ function sort(all_records_array){
             let time_val = []; 
             time_val = time_str_array[i].split(":"); 
             if (time_val.length > 2 || time_val.length < 1){
-                console.log("One (or more) of your TIME values are not in the correct format."); 
                 is_time_valid = false; 
                 break; 
             } else {
@@ -536,10 +541,31 @@ function sort(all_records_array){
         }
     }
 
+    let date_obj_arr = []; 
+    // time_arr has all of the dates and times 
+    for (let i = 0; i < time_arr.length; i++){
+        date_obj_arr.push({key: (i), value: date_conversion(time_arr[i])}); 
+    }
+
+    // console.log(date_obj_arr); // can delete this later
+    date_obj_arr.sort((a, b) => a.value - b.value);
+
+    // now store the order of the keys in another array
+    // then rearrange the records array into this order 
+
+    let date_order = []; 
 
     for (let i = 0; i < time_arr.length; i++){
-        
+        date_order.push(date_obj_arr[i].key); 
     }
+
+    let sorted_records_arr = []; 
+    // console.log(date_order); // delete later
+    sorted_records_arr = date_order.map(index => all_records_array[index]);
+
+    return sorted_records_arr; 
+
+
 
 }
 
@@ -690,18 +716,18 @@ function date_conversion(cmd_input){
     date_arg = year + "-" + month + "-" + day + "T" + hour + ":" + min + ":" + sec; 
 
     date_obj = new Date(date_arg);  
-    date_string = ""; 
+    // date_string = ""; 
 
-    month = find_month(date_obj.getMonth()); 
-    time_range = find_time_range(date_obj.getHours()); 
-    hour = calc_hour(date_obj.getHours()); 
-    min = calc_min(date_obj.getMinutes(), date_obj.getSeconds()); 
-    sec = calc_sec(date_obj.getSeconds()); 
+    // month = find_month(date_obj.getMonth()); 
+    // time_range = find_time_range(date_obj.getHours()); 
+    // hour = calc_hour(date_obj.getHours()); 
+    // min = calc_min(date_obj.getMinutes(), date_obj.getSeconds()); 
+    // sec = calc_sec(date_obj.getSeconds()); 
 
-    date_string = month + " " + date_obj.getDate() + " " + date_obj.getFullYear() + " " + hour + min + sec + " " + time_range; 
-    console.log(date_string); 
+    // date_string = month + " " + date_obj.getDate() + " " + date_obj.getFullYear() + " " + hour + min + sec + " " + time_range; 
+    // console.log(date_string); 
     
-    return date_string; 
+    return date_obj; 
      
 }
 
