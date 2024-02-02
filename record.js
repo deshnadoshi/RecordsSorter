@@ -19,8 +19,8 @@ function process_input(file_name_string){
     let is_color_err = false; 
     let is_weight_err = false;
     let is_units_err = false;
-    let is_unique_id_err = false; 
-    let is_time_format_err = false; 
+    let is_unique_id_corr = false; 
+    let is_time_format_corr = false; 
 
     fs.readFile(file_name_string, (err, data) =>{
         if (err){
@@ -108,8 +108,16 @@ function process_input(file_name_string){
                 }
             }
 
-            is_unique_id_err = check_valid_id(records); 
-            is_time_format_err = check_valid_time(records); 
+            is_unique_id_corr = check_valid_id(records); 
+            
+            is_time_format_corr = check_valid_time(records); 
+
+            if (is_req_err == false && is_color_err == false && is_units_err == false && is_weight_err == false && is_unique_id_corr == true && is_time_format_corr == true){
+                console.log("Your records file contains NO errors!"); 
+                console.log("The results of the sorted records are stored in the 'sorted_records.txt' file in your file directory."); 
+            } else {
+                console.log("\n\n--YOU HAVE THE AFOREMENTIONED ISSUES IN YOUR RECORDS FILE. PLEASE EDIT THE FILE AND TRY AGAIN.--"); 
+            }
             
         } 
     }); 
@@ -264,7 +272,7 @@ function check_valid_color(record_array){
         color_value_arr = color_line.split(":"); 
         if (color_value_arr.length > 2){
             // if there is more than one :, and it is split into more than 2 parts, theres a formatting issue
-            console.log("Please check your file for a formatting issue."); 
+            console.log("Please check your file for a formatting issue under COLOR."); 
             is_valid_color = false; 
         } else {
             // if there are only two parts, take the second part and check that
@@ -307,13 +315,13 @@ function check_valid_units(record_array){
 
     if (units_line.includes(":")){
         units_value_arr = units_line.split(":"); 
-        if (units_value_arr.length > 2){
+        if (units_value_arr.length > 2 || units_value_arr.length < 1){
             // if there is more than one :, and it is split into more than 2 parts, theres a formatting issue
-            console.log("Please check your file for a formatting issue."); 
+            console.log("Please check your file for a formatting issue under UNITS."); 
             is_valid_units = false; 
         } else {
             // if there are only two parts, take the second part and check that
-            units_value = units_value_arr[units_value_arr.length - 1]; // this has the color value
+            units_value = units_value_arr[1]; // this has the color value
             for (let i = 0; i < allowable_units.length; i++){
                 if (units_value.toLowerCase() === allowable_units[i].toLowerCase()){
                     in_units_list = true; 
@@ -326,9 +334,13 @@ function check_valid_units(record_array){
             }
         }
     } else {
-        if (!(units_line === ""))
+        if (!(units_line === "")){
             console.log("There is a formatting issue in one (or more) of your records. ");
-        is_valid_units = false; 
+            is_valid_units = false; 
+            // this is included bc some records don't have an input line so it just checks the files that do have on
+
+        }
+            
     }
 
 
@@ -358,7 +370,7 @@ function check_valid_weight(record_array){
         weight_value_arr = weight_line.split(":"); 
         if (weight_value_arr.length > 2){
             // if there is more than one :, and it is split into more than 2 parts, theres a formatting issue
-            console.log("Please check your file for a formatting issue."); 
+            console.log("Please check your file for a formatting issue under WEIGHT."); 
             is_valid_weight = false; 
         } else {
             // if there are only two parts, take the second part and check that
@@ -373,9 +385,11 @@ function check_valid_weight(record_array){
             }
         }
     } else {
-        if (!(weight_line === ""))
+        if (!(weight_line === "")){
             console.log("There is a formatting issue in one (or more) of your records. ");
-        is_valid_weight = false; 
+            is_valid_weight = false; 
+        }
+        
     }
 
 
@@ -420,6 +434,8 @@ function check_valid_time(all_records_array){
     let time_str_array = []; 
     let time_arr = []; 
     let is_time_valid = true; 
+    let is_format_correct = []; 
+    let is_date_nums_valid = []; 
 
     for (let i = 0; i < all_records_array.length; i++){
         record_i = split_record(all_records_array[i]); 
@@ -443,7 +459,7 @@ function check_valid_time(all_records_array){
             }
         } else {
             is_time_valid = false; 
-            console.log("One (or more) of your TIME values are not in the correct format."); 
+            console.log("One (or more) of your TIME properties are incorrectly formatted."); 
             break; 
         }
         
@@ -452,8 +468,32 @@ function check_valid_time(all_records_array){
     if (time_str_array.length == time_arr.length){
         // if their lengths arent the same it means tht some of the times were invalid
         // if their lengths ARE the same it means that all the entries are valid and so now i can check them for formatting
-        console.log(time_arr); 
+        // console.log(time_arr); 
 
+        for (let i = 0; i < time_arr.length; i++){
+            is_format_correct.push(check_input_date(time_arr[i])); 
+        }
+
+        for (let i = 0; i < is_format_correct.length; i++){
+            if (is_format_correct[i] == false){
+                is_time_valid = false; 
+                console.log("One (or more) of your TIME values are incorrectly formatted.");  
+            }
+        }
+
+        if (is_time_valid == true){
+            // so there are no issues with format thus far
+            for (let i = 0; i < time_arr.length; i++){
+                is_date_nums_valid.push(check_valid_date(time_arr[i])); 
+            }
+            
+            for (let i = 0; i < is_date_nums_valid.length; i++){
+                if (is_date_nums_valid[i] == false){
+                    is_time_valid = false; 
+                    console.log("One (or more) of your TIME values are invalid."); 
+                }
+            }
+        }
 
     }
 
@@ -477,18 +517,10 @@ function check_valid_date(check_date){
     let min = parseInt(date_split(check_date).min);
     let sec = parseInt(date_split(check_date).sec); 
 
-    // Check for year. 
-    
-    // if (year < 1900){
-    //     log_message += "This is an unusually old date. "; 
-    // } else if (year > 2100){
-    //     log_message += "This is an unusually future date. "; 
-    // }
 
     // Check for month and day. 
     if (month > 12 || month < 1){
         console.log("The month is invalid."); 
-        log_message = "This is an invalid date. "; 
         is_valid_date = false; 
     }
 
@@ -502,28 +534,22 @@ function check_valid_date(check_date){
         console.log("The number of days does not match the month or year."); 
         // Checks if the month matches the month
         is_valid_date = false; 
-        log_message = "This is an invalid date. ";
     }
 
     if (hour > 23 || hour < 0){
         console.log("The hours are invalid."); 
         is_valid_date = false; 
-        log_message = "This is an invalid date. "; 
     }
 
     if (min > 59 || min < 0){
         console.log("The minutes are invalid."); 
         is_valid_date = false; 
-        log_message = "This is an invalid date. "; 
     }
 
     if (sec > 59 || sec < 0){
         console.log("The seconds are invalid."); 
         is_valid_date = false; 
-        log_message = "This is an invalid date. "; 
     }
-
-    console.log(log_message); 
     
     return is_valid_date; 
 
@@ -596,9 +622,7 @@ function check_input_date(check_date){
     }
 
     if (!matched){
-        console.log("Please check that the date/time entered is within the accepted range of value."); 
-        log_message = "This is an invalid date. "; 
-        console.log(log_message); 
+        console.log("TIME values must follow the format: YYYYMMDDTHHMMSS."); 
     }
 
     return matched; 
