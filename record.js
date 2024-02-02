@@ -115,6 +115,10 @@ function process_input(file_name_string){
             if (is_req_err == false && is_color_err == false && is_units_err == false && is_weight_err == false && is_unique_id_corr == true && is_time_format_corr == true){
                 console.log("Your records file contains NO errors!"); 
                 console.log("The results of the sorted records are stored in the 'sorted_records.txt' file in your file directory."); 
+
+                date_conversion("20031105T152300"); // obviously need to change this
+                
+
             } else {
                 console.log("\n\n--YOU HAVE THE AFOREMENTIONED ISSUES IN YOUR RECORDS FILE. PLEASE EDIT THE FILE AND TRY AGAIN.--"); 
             }
@@ -133,7 +137,7 @@ const readline = require('node:readline').createInterface({
 
 function get_file_name(){
     
-    readline.question(`\n\nEnter the name of your text file with the extension included (i.e. records.txt) [enter 'Q' to exit]\nPlease note >> Input files are sensitive to whitespace: `, input_file_name => {
+    readline.question(`\n\nEnter the name of your text file with the extension included (i.e. records.txt) [enter 'Q' to exit]\nPlease Note >> Input files are sensitive to whitespace, however they are not case sensitive: `, input_file_name => {
         fs.readdir('.', (err, files) => {
             if (err) {
               console.error(err);
@@ -151,8 +155,7 @@ function get_file_name(){
                 }, 10);
                   
             } else {
-                console.log(`${input_file_name} does not exist in the current directory.`);
-                console.log("Please enter a new file name."); 
+                console.log(`${input_file_name} does not exist in the current directory. Please enter a new file name.`);
                 get_file_name(); 
             }
             
@@ -634,10 +637,6 @@ function check_input_date(check_date){
  */
 function date_conversion(cmd_input){
 
-    if (!check_valid_date(cmd_input) || !check_input_date(cmd_input)){
-        return log_message; 
-    }
-
     date_info = cmd_input.substring(0, 8); // All of the data before the 'T', represents the date
     time_info = cmd_input.substring(9); // All of the data after the 'T', represents the time
 
@@ -648,13 +647,6 @@ function date_conversion(cmd_input){
     hour = time_info.substring(0, 2); 
     min = time_info.substring(2, 4); 
     sec = time_info.substring(4);
-
-    // year = date_split(date_input).year;
-    // month = date_split(date_input).month;
-    // day = date_split(date_input).day;
-    // hour = date_split(date_input).hour;
-    // min = date_split(date_input).min;
-    // sec = date_split(date_input).sec;
 
     date_arg = year + "-" + month + "-" + day + "T" + hour + ":" + min + ":" + sec; 
 
@@ -667,15 +659,9 @@ function date_conversion(cmd_input){
     min = calc_min(date_obj.getMinutes(), date_obj.getSeconds()); 
     sec = calc_sec(date_obj.getSeconds()); 
 
-    date_string = month + " " + date_obj.getDate() + ", " + date_obj.getFullYear() + ", at " + hour + min + sec + " " + time_range; 
+    date_string = month + " " + date_obj.getDate() + " " + date_obj.getFullYear() + " " + hour + min + sec + " " + time_range; 
     console.log(date_string); 
     
-    if (repeat_entry) { 
-        get_date();
-    } else {
-        readline.close();
-    }
-
     return date_string; 
      
 }
@@ -688,40 +674,40 @@ function date_conversion(cmd_input){
 function find_month(num){
     switch (num){
         case 0:
-            return "January"; 
+            return "Jan"; 
             break; 
         case 1: 
-            return "February"; 
+            return "Feb"; 
             break; 
         case 2: 
-            return "March"; 
+            return "Mar"; 
             break; 
         case 3:
-            return "April";
+            return "Apr";
             break;
         case 4: 
             return "May";
             break; 
         case 5: 
-            return "June"; 
+            return "Jun"; 
             break; 
         case 6: 
-            return "July"; 
+            return "Jul"; 
             break; 
         case 7:
-            return "August"; 
+            return "Aug"; 
             break; 
         case 8:
-            return "September";
+            return "Sep";
             break;
         case 9: 
-            return "October"; 
+            return "Oct"; 
             break;
         case 10:
-            return "November"; 
+            return "Nov"; 
             break;
         case 11:
-            return "December";
+            return "Dec";
             break; 
         default:
             return "";
@@ -748,11 +734,8 @@ function find_time_range(num){
  * @returns The 12 hour format time.
  */
 function calc_hour(num){
-    if (num == 0){
-        return 12; 
-    }
-    if (num > 12){
-        return (num - 12); 
+    if (num < 12){
+        return "0" + num; 
     }
 
     return num; 
@@ -764,9 +747,7 @@ function calc_hour(num){
  * @returns Formatted output for the minutes.
  */
 function calc_min(num, seconds){
-    if (num == 0 && seconds == 0){
-        return ""; 
-    } else if (num == 0){
+    if (num == 0){
         return ":0" + num; 
     }
     return ":" + num; 
@@ -779,7 +760,7 @@ function calc_min(num, seconds){
  */
 function calc_sec(num){
     if (num == 0){
-        return ""; 
+        return ":0" + num; 
     } 
     return ":" + num; 
 }
