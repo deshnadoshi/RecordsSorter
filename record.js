@@ -30,6 +30,13 @@ function process_input(file_name_string){
             let file_data = data.toString(); 
             let if_record_end = false;
             let if_record_begin = false; 
+            let if_whitespace = false; 
+
+            let lines = file_data.split('\n');
+            let contains_whitespace = lines.some(line => /\s/.test(line));
+            if (contains_whitespace){
+                console.log("There is white-space in your file. Please delete it."); 
+            }
 
             /**
              * Reading data from the input file, records.txt
@@ -113,7 +120,7 @@ function process_input(file_name_string){
             
             is_time_format_corr = check_valid_time(records); 
 
-            if (is_req_err == false && is_color_err == false && is_units_err == false && is_weight_err == false && is_unique_id_corr == true && is_time_format_corr == true){
+            if (is_req_err == false && is_color_err == false && is_units_err == false && is_weight_err == false && is_unique_id_corr == true && is_time_format_corr == true && contains_whitespace == false){
                 let sorted_arr = []; 
                 console.log("Your records file contains NO errors!"); 
                 console.log("The results of the sorted records are stored in the 'sorted_records.txt' file in your file directory."); 
@@ -121,7 +128,18 @@ function process_input(file_name_string){
                 date_conversion("20031105T152300"); // obviously need to change this
                 sorted_arr = sort_times(records); // sorted_arr has the sorted contents
                 
+                let output_records = sorted_arr.join(''); 
+                // console.log(output_records); 
                 // now need to export these contents to a file 
+
+                fs.writeFile('sorted_records.txt', output_records, (err) => {
+                    if (err) {
+                      console.error('Error writing to file:', err);
+                    } else {
+                      console.log('File written successfully.');
+                    }
+                  });
+                  
 
                 return "Success"; 
 
