@@ -33,7 +33,7 @@ function process_input(file_name_string){
             let if_whitespace = false; 
 
             let lines = file_data.split('\n');
-            let contains_whitespace = lines.some(line => /\s/.test(line));
+            let contains_whitespace = lines.some(line => /^\s*$/.test(line));
             if (contains_whitespace){
                 console.log("There is white-space in your file. Please delete it."); 
             }
@@ -177,7 +177,7 @@ function get_file_name(){
                 process_input(input_file_name);
                 setTimeout(function() {
                     get_file_name(); 
-                }, 10);
+                }, 20);
                   
             } else {
                 console.log(`${input_file_name} does not exist in the current directory. Please enter a new file name.`);
