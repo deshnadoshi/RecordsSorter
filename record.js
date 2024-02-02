@@ -504,6 +504,11 @@ function check_valid_time(all_records_array){
 
 }
 
+function sort(all_records_array){
+    // take the entire array and store all the time values with the id 1 stuff in another array 
+    // 
+}
+
 /**
  * Determines if the chosen date and time is valid. 
  * Checks for maximum and minimum possible values of each field. 
