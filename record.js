@@ -15,7 +15,12 @@ function process_input(file_name_string){
     let current_record = "";
     let records = []; 
     let check_records = []; 
-    let is_record_err = false; 
+    let is_req_err = false; 
+    let is_color_err = false; 
+    let is_weight_err = false;
+    let is_units_err = false;
+    let is_unique_id_err = false; 
+    let is_time_format_err = false; 
 
     fs.readFile(file_name_string, (err, data) =>{
         if (err){
@@ -55,10 +60,10 @@ function process_input(file_name_string){
                 check_records.push(check_requirements(record_i)); 
             } 
 
-            // might have to get rid of this
+            
              for (let i = 0; i < check_records.length; i++){
                 if (check_records[i] == false){
-                    is_record_err = true;  
+                    is_req_err = true;  
                 }
              }
 
@@ -71,8 +76,7 @@ function process_input(file_name_string){
             
             for (let i = 0; i < check_records.length; i++){
                 if (check_records[i] == false){  
-                    is_record_err = true; 
-                    // process.exit();  
+                    is_color_err = true; 
                 }
             }
 
@@ -85,7 +89,7 @@ function process_input(file_name_string){
             
             for (let i = 0; i < check_records.length; i++){
                 if (check_records[i] == false){  
-                    is_record_err = true; 
+                    is_units_err = true; 
                     // process.exit();  
                 }
             }
@@ -99,10 +103,12 @@ function process_input(file_name_string){
             
             for (let i = 0; i < check_records.length; i++){
                 if (check_records[i] == false){  
-                    is_record_err = true; 
+                    is_weight_err = true; 
                     // process.exit();  
                 }
             }
+
+            is_unique_id_err = check_valid_id(records); 
 
             
         } 
@@ -376,23 +382,47 @@ function check_valid_weight(record_array){
     return is_valid_weight; 
 }
 
-function check_valid_weight(all_records_array){
-    // need to check that each identifier is unique 
-    // going to run with the assumption (that will have to be built in later) that there is an identifier row 
-    // in each record 
+function check_valid_id(all_records_array){
+    let all_unique = true; 
     let id_array = []; 
-    let individual_line = []; 
+    // let individual_line = []; 
     // all_records_array is the records array in the original function 
 
     // need to get the identifier line from each records array 
     for (let i = 0; i < all_records_array.length; i++){
-        individual_line = split_record(i); 
-        individual_line.forEach(line =>  {
-            if ((line.toLowerCase()).includes("identifier")){
-                id_array.push(line)
-            } 
-        });
+        record_i = split_record(all_records_array[i]); 
+        for (let j = 0; j < record_i.length; j++){
+            if ((record_i[j].toLowerCase()).includes("identifier")){
+                id_array.push(record_i[j]); 
+            }
+        }
     }
 
-    console.log(id_array); 
+    // now id_array has all of the identifier lines, just need to compare if they are the same 
+    for (let i = 0; i < id_array.length; i++) {
+        for (let j = i + 1; j < id_array.length; j++) {
+            if (id_array[i].toLowerCase() === id_array[j].toLowerCase()) {
+                all_unique = false; 
+            }
+        }
+    }
+
+    // console.log(id_array);  // need to delete or comment this out later on
+    return all_unique; 
+}
+
+function check_valid_time(all_records_array){
+
+    let time_array = []; 
+
+    for (let i = 0; i < all_records_array.length; i++){
+        record_i = split_record(all_records_array[i]); 
+        for (let j = 0; j < record_i.length; j++){
+            if ((record_i[j].toLowerCase()).includes("time")){
+                time_array.push(record_i[j]); 
+            }
+        }
+    }
+
+    
 }
