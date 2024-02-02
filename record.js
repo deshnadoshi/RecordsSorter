@@ -9,7 +9,8 @@ const allowable_colors = [
   ];
   
 
-  const allowable_units = ["mg", "g", "kg", "oz", "lb", "ton"]; 
+const allowable_units = ["mg", "g", "kg", "oz", "lb", "ton"];
+
 function process_input(file_name_string){   
 
     let current_record = "";
@@ -164,7 +165,7 @@ function get_file_name(){
     });
 }
 
-get_file_name(); 
+
 
 function split_record(record){
     let record_contents = []; 
@@ -506,7 +507,40 @@ function check_valid_time(all_records_array){
 
 function sort(all_records_array){
     // take the entire array and store all the time values with the id 1 stuff in another array 
-    // 
+    // use date_conversion to get the string 
+    // then sort using the min/max method for normal numbers 
+
+    let time_str_array = [];
+    let time_arr = []; 
+
+    for (let i = 0; i < all_records_array.length; i++){
+        record_i = split_record(all_records_array[i]); 
+        for (let j = 0; j < record_i.length; j++){
+            if ((record_i[j].toLowerCase()).includes("time")){
+                time_str_array.push(record_i[j]); 
+            }
+        }
+    }
+
+    for (let i = 0; i < time_str_array.length; i++){
+        if (time_str_array[i].includes(":")){
+            let time_val = []; 
+            time_val = time_str_array[i].split(":"); 
+            if (time_val.length > 2 || time_val.length < 1){
+                console.log("One (or more) of your TIME values are not in the correct format."); 
+                is_time_valid = false; 
+                break; 
+            } else {
+                time_arr.push(time_val[1]); 
+            }
+        }
+    }
+
+
+    for (let i = 0; i < time_arr.length; i++){
+        
+    }
+
 }
 
 /**
@@ -798,3 +832,5 @@ function date_split(cmd_input){
     };
 
 }
+
+get_file_name(); 
