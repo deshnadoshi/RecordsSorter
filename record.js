@@ -1,160 +1,160 @@
 const { time, log } = require('console');
 const fs = require('fs');
 
+
 const allowable_colors = [
     "Red", "Green", "Blue", "Yellow", "Purple",
     "Cyan", "Magenta", "White", "Black", "Gray",
     "Silver", "Maroon", "Olive", "Navy", "Teal",
-    "Lime", "Aqua", "Fuchsia", "Pink", "Brown"
+    "Lime", "Aqua", "Fuchsia", "Pink", "Brown", "Orange"
   ];
   
 
 const allowable_units = ["mg", "g", "kg", "oz", "lb", "ton"];
 
 function process_input(file_name_string){   
+    return new Promise((resolve, reject) => {
+        let current_record = "";
+        let records = []; 
+        let check_records = []; 
+        let is_req_err = false; 
+        let is_color_err = false; 
+        let is_weight_err = false;
+        let is_units_err = false;
+        let is_unique_id_corr = false; 
+        let is_time_format_corr = false; 
+        
 
-    let current_record = "";
-    let records = []; 
-    let check_records = []; 
-    let is_req_err = false; 
-    let is_color_err = false; 
-    let is_weight_err = false;
-    let is_units_err = false;
-    let is_unique_id_corr = false; 
-    let is_time_format_corr = false; 
+        fs.readFile(file_name_string, (err, data) =>{
+            if (err){
+                console.log("Please try again."); 
+            } else {
+                let file_data = data.toString(); 
+                let if_record_end = false;
+                let if_record_begin = false; 
+                let if_whitespace = false; 
 
-    fs.readFile(file_name_string, (err, data) =>{
-        if (err){
-            console.log("Please try again."); 
-        } else {
-            let file_data = data.toString(); 
-            let if_record_end = false;
-            let if_record_begin = false; 
-            let if_whitespace = false; 
+                let lines = file_data.split('\n');
+                let contains_whitespace = lines.some(line => /^\s*$/.test(line));
+                if (contains_whitespace){
+                    console.log("There is white-space in your file. Please delete it."); 
+                }
 
-            let lines = file_data.split('\n');
-            let contains_whitespace = lines.some(line => /^\s*$/.test(line));
-            if (contains_whitespace){
-                console.log("There is white-space in your file. Please delete it."); 
-            }
+                /**
+                 * Reading data from the input file, records.txt
+                 */
+                file_data.split(/\r?\n/).forEach(line =>  {
 
-            /**
-             * Reading data from the input file, records.txt
-             */
-            file_data.split(/\r?\n/).forEach(line =>  {
+                    if ((line.toLowerCase()).includes("begin:record")){
+                        if_record_begin = true;  
+                        if_record_end = false; 
+                    } 
 
-                if ((line.toLowerCase()).includes("begin:record")){
-                    if_record_begin = true;  
-                    if_record_end = false; 
+                    if ((if_record_begin == true) && (if_record_end == false)){ // if you haven't reached the end of the record, continue
+                        current_record += (line + "\n"); 
+                    }
+                    
+                    if ((line.toLowerCase()).includes("end:record")){ 
+                        records.push(current_record); // not adding to the array properly?
+                        if_record_end = true; // the current record has ended 
+                        if_record_begin = false; 
+                        current_record = ""; 
+                    }
+                });
+
+                /**
+                 * Handling the contents of each record.   
+                 */
+                for (let i = 0; i < records.length; i++){
+                    record_i = split_record(records[i]); // record_i is the array storing the individual lines of the current record
+                    check_records.push(check_requirements(record_i)); 
                 } 
 
-                if ((if_record_begin == true) && (if_record_end == false)){ // if you haven't reached the end of the record, continue
-                    current_record += (line + "\n"); 
-                }
                 
-                if ((line.toLowerCase()).includes("end:record")){ 
-                    records.push(current_record); // not adding to the array properly?
-                    if_record_end = true; // the current record has ended 
-                    if_record_begin = false; 
-                    current_record = ""; 
-                }
-            });
-
-            /**
-             * Handling the contents of each record.   
-             */
-            for (let i = 0; i < records.length; i++){
-                record_i = split_record(records[i]); // record_i is the array storing the individual lines of the current record
-                check_records.push(check_requirements(record_i)); 
-            } 
-
-            
-             for (let i = 0; i < check_records.length; i++){
-                if (check_records[i] == false){
-                    is_req_err = true;  
-                }
-             }
-
-             check_records = []; 
-
-             for (let i = 0; i < records.length; i++){
-                record_i = split_record(records[i]);
-                check_records.push(check_valid_color(record_i)); 
-            }
-            
-            for (let i = 0; i < check_records.length; i++){
-                if (check_records[i] == false){  
-                    is_color_err = true; 
-                }
-            }
-
-            check_records = [];
-
-            for (let i = 0; i < records.length; i++){
-                record_i = split_record(records[i]);
-                check_records.push(check_valid_units(record_i)); 
-            }
-            
-            for (let i = 0; i < check_records.length; i++){
-                if (check_records[i] == false){  
-                    is_units_err = true; 
-                    // process.exit();  
-                }
-            }
-
-            check_records = [];
-
-            for (let i = 0; i < records.length; i++){
-                record_i = split_record(records[i]);
-                check_records.push(check_valid_weight(record_i)); 
-            }
-            
-            for (let i = 0; i < check_records.length; i++){
-                if (check_records[i] == false){  
-                    is_weight_err = true; 
-                    // process.exit();  
-                }
-            }
-
-            is_unique_id_corr = check_valid_id(records); 
-            
-            is_time_format_corr = check_valid_time(records); 
-
-            if (is_req_err == false && is_color_err == false && is_units_err == false && is_weight_err == false && is_unique_id_corr == true && is_time_format_corr == true && contains_whitespace == false){
-                let sorted_arr = []; 
-                console.log("Your records file contains NO errors!"); 
-                console.log("The results of the sorted records are stored in the 'sorted_records.txt' file in your file directory."); 
-
-                date_conversion("20031105T152300"); // obviously need to change this
-                sorted_arr = sort_times(records); // sorted_arr has the sorted contents
-                
-                let output_records = sorted_arr.join(''); 
-                // console.log(output_records); 
-                // now need to export these contents to a file 
-
-                fs.writeFile('sorted_records.txt', output_records, (err) => {
-                    if (err) {
-                      console.error('Error writing to file:', err);
-                    } else {
-                      console.log('File written successfully.');
+                for (let i = 0; i < check_records.length; i++){
+                    if (check_records[i] == false){
+                        is_req_err = true;  
                     }
-                  });
-                  
+                }
 
-                return "Success"; 
+                check_records = []; 
 
-            } else {
-                console.log("\n\n--YOU HAVE THE AFOREMENTIONED ISSUES IN YOUR RECORDS FILE. PLEASE EDIT THE FILE AND TRY AGAIN.--"); 
-                return "Failure"; 
-            }
-            
-        } 
-    }); 
+                for (let i = 0; i < records.length; i++){
+                    record_i = split_record(records[i]);
+                    check_records.push(check_valid_color(record_i)); 
+                }
+                
+                for (let i = 0; i < check_records.length; i++){
+                    if (check_records[i] == false){  
+                        is_color_err = true; 
+                    }
+                }
 
-     
+                check_records = [];
 
+                for (let i = 0; i < records.length; i++){
+                    record_i = split_record(records[i]);
+                    check_records.push(check_valid_units(record_i)); 
+                }
+                
+                for (let i = 0; i < check_records.length; i++){
+                    if (check_records[i] == false){  
+                        is_units_err = true; 
+                        // process.exit();  
+                    }
+                }
 
+                check_records = [];
+
+                for (let i = 0; i < records.length; i++){
+                    record_i = split_record(records[i]);
+                    check_records.push(check_valid_weight(record_i)); 
+                }
+                
+                for (let i = 0; i < check_records.length; i++){
+                    if (check_records[i] == false){  
+                        is_weight_err = true; 
+                        // process.exit();  
+                    }
+                }
+
+                is_unique_id_corr = check_valid_id(records); 
+                
+                is_time_format_corr = check_valid_time(records); 
+
+                if (is_req_err == false && is_color_err == false && is_units_err == false && is_weight_err == false && is_unique_id_corr == true && is_time_format_corr == true && contains_whitespace == false){
+                    
+                    let sorted_arr = []; 
+                    console.log("Your records file contains NO errors!"); 
+                    console.log("The results of the sorted records are stored in the 'sorted_records.txt' file in your file directory."); 
+
+                    date_conversion("20031105T152300"); // obviously need to change this
+                    sorted_arr = sort_times(records); // sorted_arr has the sorted contents
+                    
+                    let output_records = sorted_arr.join(''); 
+
+                    fs.writeFile('sorted_records.txt', output_records, (err) => {
+                        if (err) {
+                            console.error('There was an issue with the output file. Please try again.');
+                        } else { 
+                            
+                            console.log('File written successfully.');
+                            resolve(true); 
+                        }
+                    });
+                    
+                } else {
+                    console.log("\n\n--YOU HAVE THE AFOREMENTIONED ISSUES IN YOUR RECORDS FILE. PLEASE EDIT THE FILE AND TRY AGAIN.--"); 
+                    resolve(false); 
+                }
+                
+            } 
+        }); 
+
+    });
 } 
+
+
 const readline = require('node:readline').createInterface({
     input: process.stdin,
     output: process.stdout,
@@ -174,7 +174,8 @@ function get_file_name(){
             }
 
             if (files.includes(input_file_name)) {
-                process_input(input_file_name);
+                let check_it_works = false; 
+                check_it_works = process_input(input_file_name);
                 setTimeout(function() {
                     get_file_name(); 
                 }, 20);
@@ -878,3 +879,5 @@ function date_split(cmd_input){
 }
 
 get_file_name(); 
+
+module.exports = { process_input };
