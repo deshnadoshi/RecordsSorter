@@ -83,4 +83,35 @@ describe ('File-Records Sorter', () => {
         expect(result).toBe(false); 
     });
 
+    // Test Case 13: Files with records with multiple COLOR or WEIGHT properties should not be sorted. 
+    it ('should not sort a file with multiple COLOR or WEIGHT properties', async () => {
+        const result = await process_input("test13.txt"); 
+        expect(result).toBe(false); 
+    });
+
+    // Test Case 14: File with records where the TIME property is not formatted correctly should not be sorted.
+    it ('should not sort a file with multiple COLOR or WEIGHT properties', async () => {
+        const result = await process_input("test14.txt"); 
+        expect(result).toBe(false); 
+    });
+
+    // Test Case 15: Files with records all occuring on the same day, must be ordered in ascending order based on time. 
+    it ('should sort a file with records all occuring on the same day', async () => {
+        const result = await process_input("test15.txt"); 
+        expect(result).toBe(true); 
+
+        const test15_actual = fs.readFileSync('./sorted_records.txt', 'utf-8');
+        expect(test15_actual).toBe("BEGIN:RECORD\nIDENTIFIER:record3\nTIME:20031105T092400\nCOLOR:cyan\nEND:RECORD\nBEGIN:RECORD\nIDENTIFIER:record4\nTIME:20031105T113530\nCOLOR:orange\nEND:RECORD\nBEGIN:RECORD\nIDENTIFIER:record2\nTIME:20031105T123454\nCOLOR:red\nEND:RECORD\nBEGIN:RECORD\nIDENTIFIER:record1\nTIME:20031105T152400\nUNITS:kg\nWEIGHT:112\nCOLOR:Blue\nEND:RECORD"); 
+
+    });
+
+    // Test Case 16: Files with records all occuring on the same day at the same time should be ordered in the same manner as the original orderin. 
+    it ('should sort a file with records all occuring on the same day', async () => {
+        const result = await process_input("test16.txt"); 
+        expect(result).toBe(true); 
+
+        const test16_actual = fs.readFileSync('./sorted_records.txt', 'utf-8');
+        expect(test16_actual).toBe("BEGIN:RECORD\nIDENTIFIER:record1\nTIME:20031105T152400\nUNITS:kg\nWEIGHT:112\nCOLOR:Blue\nEND:RECORD\nBEGIN:RECORD\nIDENTIFIER:record2\nTIME:20031105T152400\nCOLOR:red\nEND:RECORD\nBEGIN:RECORD\nIDENTIFIER:record3\nTIME:20031105T152400\nCOLOR:cyan\nEND:RECORD\nBEGIN:RECORD\nIDENTIFIER:record4\nTIME:20031105T152400\nCOLOR:orange\nEND:RECORD"); 
+    });
+
 })
