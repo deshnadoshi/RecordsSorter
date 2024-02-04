@@ -6,7 +6,10 @@ const allowable_colors = [
     "Red", "Green", "Blue", "Yellow", "Purple",
     "Cyan", "Magenta", "White", "Black", "Gray",
     "Silver", "Maroon", "Olive", "Navy", "Teal",
-    "Lime", "Aqua", "Fuchsia", "Pink", "Brown", "Orange"
+    "Lime", "Aqua", "Fuchsia", "Pink", "Brown", 
+    "Orange", "Violet", "Pink", "Indigo", "Gold", 
+    "Lavender", "Turqoise"
+
   ];
   
 
@@ -581,10 +584,21 @@ function sort_times(all_records_array){
     let sorted_records_arr = []; 
     // console.log(date_order); // delete later
     sorted_records_arr = date_order.map(index => all_records_array[index]);
+    final_sorted_arr = []; 
 
-    return sorted_records_arr; 
+    for (let i = 0; i < sorted_records_arr.length; i++){
+        if (i == sorted_records_arr.length - 1){
+            let arrayOfStrings = sorted_records_arr[i].split("\n");
+            let newArray = arrayOfStrings.filter(str => str.trim() !== "");
+            let newStringGroup = newArray.join("\n");
+            final_sorted_arr.push(newStringGroup);     
+        } else {
+            final_sorted_arr.push(sorted_records_arr[i]); 
+        }
+    }
 
-
+    // return sorted_records_arr; 
+    return final_sorted_arr; 
 
 }
 
