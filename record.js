@@ -245,27 +245,27 @@ function check_requirements(record_array){
     }
 
     if (id_count != 1){
-        console.log("There is an error in your records file. You may only have one IDENTIFIER property."); 
+        console.log("There is an error in your records file. Please make sure there is one IDENTIFIER property per record."); 
         valid_record = false; 
     }
 
     if (time_count != 1){
-        console.log("There is an error in your records file. You may only have one TIME property."); 
+        console.log("There is an error in your records file. Please make sure there is one TIME property per record."); 
         valid_record = false; 
     }
 
     if (units_count > 1){
-        console.log("There is an error in your records file. You may only have one UNITS property."); 
+        console.log("There is an error in your records file. Please check that there is one UNITS property."); 
         valid_record = false; 
     }
 
     if (weight_count > 1){
-        console.log("There is an error in your records file. You may only have one WEIGHT property."); 
+        console.log("There is an error in your records file. Please check that there is one WEIGHT property."); 
         valid_record = false; 
     }
 
     if (color_count > 1){
-        console.log("There is an error in your records file. You may only have one COLOR property."); 
+        console.log("There is an error in your records file. Please check that there is one COLOR property."); 
         valid_record = false; 
     }
 
