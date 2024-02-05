@@ -15,6 +15,9 @@ const allowable_colors = [
 
 const allowable_units = ["mg", "g", "kg", "oz", "lb", "ton"];
 
+/**
+ * Processess the input using the fs module and the name of the file entered. 
+ */
 function process_input(file_name_string){   
     return new Promise((resolve, reject) => {
         let current_record = "";
@@ -157,12 +160,18 @@ function process_input(file_name_string){
     });
 } 
 
-
+/**
+ * Sets-up the process for reading from the command line.
+ */
 const readline = require('node:readline').createInterface({
     input: process.stdin,
     output: process.stdout,
 });
 
+
+/**
+ * Processes reading file name/input from the command line. 
+ */
 function get_file_name(){
     
     readline.question(`\n\nEnter the name of your text file with the extension included (i.e. records.txt) [enter 'Q' to exit]\nPlease Note >> Input files are sensitive to whitespace, however they are not case sensitive: `, input_file_name => {
@@ -194,7 +203,9 @@ function get_file_name(){
 }
 
 
-
+/**
+ * Splits the entire text file into individual records and then individual strings. 
+ */
 function split_record(record){
     let record_contents = []; 
 
@@ -207,6 +218,10 @@ function split_record(record){
     return record_contents; 
 }
 
+
+/**
+ * Checks for the basic requirements on the quantity of each property allowed. 
+ */
 function check_requirements(record_array){
     // record_array contains all the lines in one of the records 
     let id_included = false;
@@ -283,6 +298,9 @@ function check_requirements(record_array){
 
 }
 
+/**
+ * Checks if the value of the color parameter is valid. 
+ */
 function check_valid_color(record_array){
     let is_valid_color = true; 
     let color_line = "";
@@ -329,6 +347,9 @@ function check_valid_color(record_array){
     return is_valid_color; 
 }
 
+/**
+ * Checks if the value of the units parameter is valid. 
+ */
 function check_valid_units(record_array){
     let units_line = ""; 
     let is_valid_units = true; 
@@ -382,6 +403,9 @@ function check_valid_units(record_array){
 
 }
 
+/**
+ * Checks if the value of the weight parameter is valid. 
+ */
 function check_valid_weight(record_array){
     let weight_line = ""; 
     let is_valid_weight = true; 
@@ -428,6 +452,9 @@ function check_valid_weight(record_array){
     return is_valid_weight; 
 }
 
+/**
+ * Checks if the value of the identifier parameter is unique and valid. 
+ */
 function check_valid_id(all_records_array){
     let all_unique = true; 
     let id_array = []; 
@@ -461,6 +488,9 @@ function check_valid_id(all_records_array){
     return all_unique; 
 }
 
+/**
+ * Checks if the value of the time parameter is valid. 
+ */
 function check_valid_time(all_records_array){
 
     let time_str_array = []; 
@@ -533,6 +563,9 @@ function check_valid_time(all_records_array){
 
 }
 
+/**
+ * Sorts the records based on the time parameter. 
+ */
 function sort_times(all_records_array){
     // take the entire array and store all the time values with the id 1 stuff in another array 
     // use date_conversion to get the string 
@@ -729,7 +762,6 @@ function check_input_date(check_date){
     return matched; 
 }
 
-//CAN MANIPULATE THIS TO CHANGE THE DATE IN A WAY THAT IS ORDERABLE
 /**
  * Creating a Date object from the command line input. 
  */
